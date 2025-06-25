@@ -1,4 +1,4 @@
-import { chromium, BrowserContext } from 'playwright';
+import { firefox, BrowserContext } from 'playwright';
 import path from 'path';
 
 const GROUP_NAME = 'Testing bot';
@@ -9,16 +9,13 @@ const REPLY_TEXT = 'Hi, please book me in for 0600-1400 monday - friday. Thank y
 const USER_DATA_DIR = path.join(__dirname, 'whatsapp_profile');
 
 function sanitizeMessage(message: string): string {
-  return message.replace(/\s+/g," ").trim();
+  return message.replace(/\s+/g, " ").trim();
 }
 
 (async () => {
-  const context: BrowserContext = await chromium.launchPersistentContext(USER_DATA_DIR, {
+  const context: BrowserContext = await firefox.launchPersistentContext(USER_DATA_DIR, {
     headless: false,
-    args: [
-      '--start-maximized',
-      '--disable-notifications'
-    ],
+    args: [],
     viewport: null
   });
 
@@ -28,14 +25,11 @@ function sanitizeMessage(message: string): string {
 
   let lastRepliedText: string | null = null;
 
- 
   while (true) {
     try {
-      // Wait for the group to appear in sidebar
       await page.waitForSelector(`span[title='${GROUP_NAME}']`, { timeout: 10000 });
       await page.click(`span[title='${GROUP_NAME}']`);
 
-      // Wait for messages to load
       await page.waitForSelector("div#main span.selectable-text[dir='ltr']", { timeout: 10000 });
       const messages = await page.$$("div#main span.selectable-text[dir='ltr']");
 
@@ -49,7 +43,6 @@ function sanitizeMessage(message: string): string {
 
         const inputBox = await page.locator('div[contenteditable="true"][data-tab="10"]');        
         
-        //Case 1: Trigger in last message
         if (
           lastMsg !== lastRepliedText &&
           lastMsg.includes(TRIGGER_TEXT_1) &&
@@ -58,12 +51,8 @@ function sanitizeMessage(message: string): string {
           console.log('[INFO] Trigger detected in last message, sending reply...');
           await inputBox?.fill(REPLY_TEXT);
           await inputBox?.press('Enter');
-          
           lastRepliedText = lastMsg;
-
-        } 
-
-        //Case 2: Trigger in second-last message, but last message must NOT be our reply
+        }
         else if (
           lastMsg !== REPLY_TEXT &&
           secondLastMsg !== lastRepliedText &&
