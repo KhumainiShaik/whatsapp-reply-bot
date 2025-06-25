@@ -1,2 +1,4 @@
 whatsapp_profile/
 whatsapp_data.zip
+/node_modules/
+.DS_Store
