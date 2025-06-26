@@ -28,3 +28,16 @@ gcloud projects add-iam-policy-binding propane-library-372214 \
   --member=serviceAccount:941099290859-compute@developer.gserviceaccount.com \
   --role=roles/compute.instanceAdmin.v1
 
+gcloud functions deploy start-vm \
+  --runtime python310 \
+  --trigger-http \
+  --entry-point start_vm \
+  --source start_vm_cf \
+  --allow-unauthenticated
+
+gcloud functions deploy stop-vm \
+  --runtime python310 \
+  --trigger-http \
+  --entry-point stop_vm \
+  --source stop_vm_cf \
+  --allow-unauthenticated
