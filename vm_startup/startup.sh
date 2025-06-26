@@ -1,29 +1,30 @@
- #!/bin/bash
+mkdir -p ~/.config/systemd/user
+nano ~/.config/systemd/user/whatsapp-bot.service
 
-echo "[STARTUP] Updating system..."
-apt-get update
-apt-get install -y unzip wget python3-pip xvfb curl gnupg2
+# Paste the following content into the file
+[Unit]
+Description=Start WhatsApp bot on boot
+After=network.target
 
-# Install Chrome
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-dpkg -i google-chrome-stable_current_amd64.deb || apt -fy install
+[Service]
+WorkingDirectory=/home/khumaini1011/WhatsApp-reply-bot
+ExecStart=/usr/bin/xvfb-run /usr/bin/npm run start
+Restart=always
+RestartSec=10
 
-# Install ChromeDriver
-CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3 | cut -d '.' -f 1)
-DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-wget "https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip"
-unzip chromedriver_linux64.zip
-mv chromedriver /usr/bin/
-chmod +x /usr/bin/chromedriver
+[Install]
+WantedBy=default.target
 
-# Unzip Chrome profile
-unzip /root/whatsapp_profile.zip -d /root/whatsapp_profile
+systemctl --user daemon-reexec
+systemctl --user daemon-reload
+systemctl --user enable whatsapp-bot.service
 
-# Install Python requirements
-pip install selenium
+sudo loginctl enable-linger khumaini1011
 
-# Launch bot in background and shutdown at 3:05 PM
-echo "python3 /root/whatsapp_bot.py &" >> /root/launch_bot.sh
-echo "echo 'shutdown -h now' | at 15:05" >> /root/launch_bot.sh
-chmod +x /root/launch_bot.sh
-bash /root/launch_bot.sh
+systemctl --user start whatsapp-bot.service
+
+
+gcloud projects add-iam-policy-binding propane-library-372214 \
+  --member=serviceAccount:941099290859-compute@developer.gserviceaccount.com \
+  --role=roles/compute.instanceAdmin.v1
+

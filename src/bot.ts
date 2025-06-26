@@ -1,7 +1,7 @@
 import { firefox, BrowserContext } from 'playwright';
 import path from 'path';
 
-const GROUP_NAME = 'Testing bot';
+const GROUP_NAME = 'Ev-Cargo Perfect Draft';
 const TRIGGER_TEXT_1 = 'available shifts next week';
 const TRIGGER_TEXT_2 = 'please respond';
 const REPLY_TEXT = 'Hi, please book me in for 0600-1400 monday - friday. Thank you'.toLowerCase();
