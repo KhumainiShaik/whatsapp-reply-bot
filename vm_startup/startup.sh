@@ -7,8 +7,9 @@ Description=Start WhatsApp bot on boot
 After=network.target
 
 [Service]
-WorkingDirectory=/home/khumaini1011/WhatsApp-reply-bot
-ExecStart=/usr/bin/xvfb-run /usr/bin/npm run start
+WorkingDirectory=/home/khumaini1011/whatsapp-reply-bot
+Environment=PATH=/home/khumaini1011/.nvm/versions/node/v22.17.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/u>
+ExecStart=/bin/bash -c "/usr/bin/xvfb-run /home/khumaini1011/.nvm/versions/node/v22.17.0/bin/npm run start"
 Restart=always
 RestartSec=10
 
@@ -22,6 +23,8 @@ systemctl --user enable whatsapp-bot.service
 sudo loginctl enable-linger khumaini1011
 
 systemctl --user start whatsapp-bot.service
+systemctl --user restart whatsapp-bot.service
+journalctl --user -u whatsapp-bot.service -f
 
 
 gcloud projects add-iam-policy-binding propane-library-372214 \
